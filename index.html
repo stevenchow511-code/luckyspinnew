@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FREE - Lucky Spin</title>
+
+<!-- Preconnect biar font lebih cepat -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+
+body{
+  background:#0f172a;
+  background-image:url("https://i.ibb.co/d0Rj3zmn/image.png");
+  background-size:cover;
+  background-position:center;
+}
+
+/* HERO */
+.hero{
+  min-height:30vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:30px 15px;
+}
+.hero h1{font-size:26px;margin-bottom:10px;}
+.hero p{font-size:14px;margin-bottom:20px;}
+
+/* TEXT RINGAN */
+.neon-text{
+  color:#fff;
+  text-shadow:0 0 8px #00f7ff;
+}
+
+/* BUTTON */
+.btn{
+  padding:10px 22px;
+  background:linear-gradient(45deg,#ff416c,#ff4b2b);
+  border-radius:50px;
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  display:inline-block;
+}
+
+/* WHEEL */
+.lucky-spin{text-align:center;margin:20px 10px;}
+.wheel-container{
+  margin:15px auto;
+  max-width:260px;
+  width:100%;
+  aspect-ratio:1/1;
+  position:relative;
+}
+.pointer{
+  position:absolute;
+  top:-8px;
+  left:50%;
+  transform:translateX(-50%);
+  border-left:12px solid transparent;
+  border-right:12px solid transparent;
+  border-bottom:24px solid #ffdd00;
+}
+
+/* FEATURES */
+.features{
+  padding:25px 10px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:center;
+}
+.card{
+  background:rgba(0,0,0,0.4);
+  padding:15px;
+  border-radius:12px;
+  max-width:260px;
+  color:#fff;
+  text-decoration:none;
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:15px;
+  font-size:13px;
+  opacity:0.6;
+}
+</style>
+
+</head>
+
+<body>
+
+<section class="hero">
+<h1 class="neon-text">SPIN WHEEL HADIAH!</h1>
+<p class="neon-text">Putar roda dan menangkan hadiah menarik</p>
+<a href="https://alursword.com/" class="btn">Mulai Sekarang</a>
+</section>
+
+<section class="lucky-spin">
+<h2 class="neon-text">PUTAR RODA!</h2>
+
+<div class="wheel-container">
+<div class="pointer"></div>
+<canvas id="wheel"></canvas>
+</div>
+
+<button id="spin-btn" class="btn">PUTAR</button>
+
+<p id="result" class="neon-text" style="margin-top:10px;"></p>
+</section>
+
+<section class="features">
+<a href="https://alursword.com" target="_blank" class="card">
+<h3>⚡ Cepat</h3>
+<p>Proses instan tanpa delay</p>
+</a>
+
+<a href="https://alursword.com" target="_blank" class="card">
+<h3>🎯 Mudah Menang</h3>
+<p>Peluang besar setiap spin</p>
+</a>
+
+<a href="https://alursword.com" target="_blank" class="card">
+<h3>🔒 Aman</h3>
+<p>Data dan akun terjaga</p>
+</a>
+</section>
+
+<footer>© 2026 JOIN NOW</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+
+const canvas=document.getElementById("wheel");
+const ctx=canvas.getContext("2d");
+
+const segments=["10RB","5RB","SCATTER","FREE","1JT","20RB"];
+const colors=["#ff4b2b","#ff416c","#00f7ff","#39ff14","#b026ff","#ffdd00"];
+
+let startAngle=0,spinning=false;
+
+function resizeCanvas(){
+  canvas.width=canvas.offsetWidth;
+  canvas.height=canvas.offsetWidth;
+}
+resizeCanvas();
+
+function drawWheel(){
+  const center=canvas.width/2;
+  const radius=center;
+  const arc=(2*Math.PI)/segments.length;
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  for(let i=0;i<segments.length;i++){
+    ctx.beginPath();
+    ctx.fillStyle=colors[i];
+    ctx.moveTo(center,center);
+    ctx.arc(center,center,radius,startAngle+i*arc,startAngle+(i+1)*arc);
+    ctx.fill();
+
+    ctx.save();
+    ctx.translate(center,center);
+    ctx.rotate(startAngle+i*arc+arc/2);
+    ctx.fillStyle="#000";
+    ctx.font=`${Math.floor(radius/7)}px sans-serif`;
+    ctx.textAlign="right";
+    ctx.fillText(segments[i],radius-10,5);
+    ctx.restore();
+  }
+}
+drawWheel();
+
+document.getElementById("spin-btn").onclick=function(){
+if(spinning) return;
+spinning=true;
+
+let spin=3000+Math.random()*2000;
+let start=null;
+
+function anim(t){
+if(!start) start=t;
+let progress=t-start;
+
+startAngle+=(spin/2000)*(Math.PI/180);
+drawWheel();
+
+if(progress<2000){
+requestAnimationFrame(anim);
+}else{
+document.getElementById("result").innerHTML=
+"🎉 Selamat!<br><a href='https://app.chaport.com/widget/show.html?appid=65df1057d9698fe66740ee72' class='btn'>AMBIL HADIAH</a>";
+spinning=false;
+}
+}
+requestAnimationFrame(anim);
+};
+
+});
+</script>
+
+</body>
+</html>
